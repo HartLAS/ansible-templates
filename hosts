@@ -1,0 +1,9 @@
+[ipa-debian]
+172.19.100.20 ansible_ssh_user=ansible ansible_ssh_pass={{ROOT_PASS}}
+
+[ipa-rpm]
+172.19.100.22 ansible_ssh_user=ansible ansible_ssh_pass={{ROOT_PASS}}
+
+[windows]
+
+[other]

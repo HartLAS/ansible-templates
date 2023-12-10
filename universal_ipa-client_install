@@ -1,0 +1,44 @@
+---
+- hosts: all
+
+  tasks:
+  
+
+  - name: Changing hostname
+    shell: "echo {{ansible_hostname}} | cut -d '.' -f1 | sed '1s/$/.domain/' > /etc/hostname"
+  
+  - block:
+
+    - name: Install FreeIpa-client
+      yum: pkg=freeipa-client state=installed update_cache=true
+
+    - name: Install bind-utils
+      yum: pkg=bind-utils state=installed update_cache=true
+ 
+    when: ansible_distribution == 'CentOS'
+   
+  - block:
+ 
+    - name: Install FreeIpa-Client
+      apt: pkg=freeipa-client state=installed update_cache=true
+
+    - name: Install dns-utils
+      apt: pkg=dnsutils state=installed update_cache=true
+
+    - name: Install bind-utils
+      apt: pkg=bind9utils state=installed update_cache=true
+
+    when: ansible_distribution == 'Debian'
+
+
+  - name: Checking dns-utils
+    shell: "nslookup 8.8.8.8"
+
+  - name: Checking internal dns resources
+    shell: "nslookup internal.dns.server"
+
+  - name: Installing and setting ipa-client
+    shell: "ipa-client-install --domain=internal.dns.server --server=ipa.server --realm DOMAIN.ZONE --principal=IPA-SERVER-LOGIN --password=IPA-SERVER-PASS --mkhomedir --enable-dns-updates -U"
+
+  - name: That`s all. Next step is reboot.
+    shell: "Echo Check for ERR & press Enter if there 0 ERR to exit from ansible & reboot computer"
